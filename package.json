@@ -1,0 +1,14 @@
+{
+  "name": "many-dimansional-sparse-array",
+  "version": "1.0.0",
+  "description": "多维稀疏数组，一维数组存储方案，可能有维度扩展缺陷，可能有单元素复用缺陷",
+  "main": "index.js",
+  "typings": "./index.ts",
+  "repository": "https://github.com/anywo/many-dimansional-sparse-array.git",
+  "author": "anywo <1377593732@qq.com>",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  }
+}
