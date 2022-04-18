@@ -21,13 +21,14 @@ var ManyDimansionalSparseArray = /** @class */ (function () {
         this.baseNumberOfEveryDimansional = new Array(); // 每个维度的基数
         this.lengthOfAxis = args; // 初始化轴长
         // 计算一维数组长度, 并且计算每个维度的基数
-        var lengthOfBody = this.lengthOfAxis.reduce(function (total, curr) {
-            _this.baseNumberOfEveryDimansional.push(total * curr);
-            return _this.baseNumberOfEveryDimansional[_this.baseNumberOfEveryDimansional.length - 1];
+        var lengthOfBody = this.lengthOfAxis.reduceRight(function (total, curr) {
+            _this.baseNumberOfEveryDimansional.unshift(total * curr);
+            return _this.baseNumberOfEveryDimansional[0];
         }, 1);
         // 完善基数数组
-        this.baseNumberOfEveryDimansional.pop();
-        this.baseNumberOfEveryDimansional.unshift(1);
+        this.baseNumberOfEveryDimansional.shift();
+        this.baseNumberOfEveryDimansional.push(1);
+        console.log(this.baseNumberOfEveryDimansional);
         this.body = Array(lengthOfBody); // 初始化一维数组
     }
     /**
@@ -93,19 +94,9 @@ var ManyDimansionalSparseArray = /** @class */ (function () {
      * @param callback
      */
     ManyDimansionalSparseArray.prototype.forEachAll = function (callback) {
-        var indexsOfCurr = Array.apply(null, { length: this.lengthOfAxis.length }); // 当前维度
-        for (var i = 0; i < this.body.length; i++) { // 遍历所有元素
-            callback.apply(void 0, __spreadArray([this.body[i]], indexsOfCurr)); // 执行回调
-            // 进位处理
-            for (var j = 0; j < indexsOfCurr.length; j++) {
-                indexsOfCurr[j] += 1; // 累加
-                if (indexsOfCurr[j] == this.lengthOfAxis[j]) { // 判断是否需要进位
-                    indexsOfCurr[j] = 0; // 当前位置零，继续循环进行进位
-                }
-                else {
-                    break; // 跳出进位
-                }
-            }
+        for (var i = 0; i < this.body.length; i++) {
+            // 遍历所有元素
+            callback.apply(void 0, __spreadArray([this.body[i]], this.calculateIndexsOfManyDimansionalArray(i))); // 执行回调
         }
     };
     /**
@@ -113,16 +104,16 @@ var ManyDimansionalSparseArray = /** @class */ (function () {
      * 轴长：一维3，二维4，三维5
      * 基数：一维1，二维3(二维最小下标)，三维12(三维最小下标)
      * 存储体一维数组最大小标：59
-     * 三维 坐标：4(59 / 12) 剩余：11(59 % 12)
-     * 二维 坐标：3(11 / 3) 剩余：2(11 % 3)
      * 一维 坐标：2(2 / 1) 剩余：0(2 % 1)
+     * 二维 坐标：3(11 / 3) 剩余：2(11 % 3)
+     * 三维 坐标：4(59 / 12) 剩余：11(59 % 12)
      * @param indexOfBody 一维数组的下标
      * @returns 多维数组的下标集合
      */
     ManyDimansionalSparseArray.prototype.calculateIndexsOfManyDimansionalArray = function (indexOfBody) {
         var ret = new Array();
-        this.baseNumberOfEveryDimansional.reduceRight(function (residue, baseNumber) {
-            ret.unshift(Math.floor(residue / baseNumber)); // 计算当前维度下标
+        this.baseNumberOfEveryDimansional.reduce(function (residue, baseNumber) {
+            ret.push(Math.floor(residue / baseNumber)); // 计算当前维度下标
             return residue % baseNumber; // 计算剩余
         }, indexOfBody);
         return ret;
