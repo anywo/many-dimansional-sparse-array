@@ -1,4 +1,4 @@
-const ManyDimansionalSparseArray = require('../index').default;
+const ManyDimansionalSparseArray = require('../index');
 const arr = new ManyDimansionalSparseArray(3, 4, 5);
 
 arr.set('0,0,0', 0, 0, 0);
